@@ -1,3 +1,4 @@
+import { Cep } from '@api/cep/cep.class';
 import {
   Column,
   CreateDateColumn,
@@ -31,4 +32,6 @@ export class Person {
 
   @UpdateDateColumn({ type: 'timestamp' })
   public updatedAt!: Date;
+
+  address?: Cep;
 }

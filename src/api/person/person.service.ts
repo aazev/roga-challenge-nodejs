@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { CepService } from '@api/cep/cep.service';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -9,9 +10,16 @@ import { Person } from './person.entity';
 export class PersonService {
   @InjectRepository(Person)
   private readonly repository: Repository<Person>;
+  @Inject(CepService)
+  private readonly cepService: CepService;
 
-  public getPersons(): Promise<Person[]> {
-    return this.repository.find();
+  public async getPersons(): Promise<Person[]> {
+    let persons = await this.repository.find();
+    for (let person of persons) {
+      const cep = await this.cepService.getCep(person.cep);
+      person.address = cep;
+    }
+    return persons;
   }
 
   public async getPerson(id: number): Promise<Person> {
@@ -19,12 +27,16 @@ export class PersonService {
     if (!person) {
       throw new NotFoundException(`Person not found`);
     } else {
+      const cep = await this.cepService.getCep(person.cep);
+      person.address = cep;
       return person;
     }
   }
 
-  public createPerson(body: CreatePersonDto): Promise<Person> {
-    const person: Person = new Person();
+  public async createPerson(body: CreatePersonDto): Promise<Person> {
+    let person: Person = new Person();
+
+    const cep = await this.cepService.getCep(body.cep);
 
     person.name = body.name;
     person.mothers_name = body.mothers_name;
@@ -32,7 +44,9 @@ export class PersonService {
     person.cep = body.cep;
     person.birth_date = body.birth_date;
 
-    return this.repository.save(person);
+    person = await this.repository.save(person);
+    person.address = cep;
+    return person;
   }
 
   public async delete(id: number): Promise<void> {

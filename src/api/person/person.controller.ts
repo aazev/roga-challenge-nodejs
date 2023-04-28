@@ -39,7 +39,7 @@ export class PersonController {
   }
 
   @Post('/new')
-  public createPerson(@Body() body: CreatePersonDto): Promise<Person> {
-    return this.service.createPerson(body);
+  public async createPerson(@Body() body: CreatePersonDto): Promise<Person> {
+    return await this.service.createPerson(body);
   }
 }
