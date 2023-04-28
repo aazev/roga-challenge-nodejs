@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Migrations: Generate",
+      "type": "shell",
+      "command": "pnpm typeorm src/migration/${input:migrationName}",
+      "problemMatcher": [],
+      "icon": {
+        "id": "database"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "migrationName",
+      "description": "The name of your migration file",
+      "type": "promptString"
+    }
+  ]
+}
