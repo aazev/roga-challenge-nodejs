@@ -1,8 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 
-import { CreateUserDto } from './user.dto';
+import { CreateUserDto } from './user.create.dto';
 import { User } from './user.entity';
 
 @Injectable()
@@ -23,16 +29,20 @@ export class UserService {
     return this.repository.find();
   }
 
-  public createUser(body: CreateUserDto): Promise<User> {
+  public async createUser(body: CreateUserDto): Promise<User> {
+    if (await this.repository.findOne({ where: { email: body.email } })) {
+      throw new ConflictException(`Email already exists`);
+    }
     const user: User = new User();
 
     user.name = body.name;
     user.email = body.email;
+    user.password = body.password;
 
     return this.repository.save(user);
   }
 
-  public async delete(id: number, soft: boolean = true): Promise<void> {
+  public async delete(id: number, soft: boolean = true): Promise<boolean> {
     const user = await this.repository.findOne({ where: { id } });
 
     if (!user) {
@@ -40,13 +50,33 @@ export class UserService {
     }
 
     if (soft) {
-      await this.repository.softDelete(id);
+      return (await this.repository.softDelete(id)).affected > 0;
     } else {
-      await this.repository.delete(id);
+      return (await this.repository.delete(id)).affected > 0;
     }
   }
 
   public async findByToken(api_token: string): Promise<User> {
     return await this.repository.findOne({ where: { api_token } });
+  }
+
+  public async login(email: string, password: string): Promise<User> {
+    const user = await this.repository
+      .createQueryBuilder('user')
+      .addSelect('user.password')
+      .where('user.email = :email', { email })
+      .getOne();
+
+    if (!user) {
+      throw new NotFoundException(`User not found`);
+    }
+
+    const isPasswordMatching = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordMatching) {
+      throw new UnauthorizedException(`Password not matching`);
+    }
+
+    return user;
   }
 }

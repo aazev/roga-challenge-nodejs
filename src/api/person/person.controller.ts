@@ -34,7 +34,7 @@ export class PersonController {
   @Delete(':id')
   public async deletePerson(
     @Param('id', ParseIntPipe) id: number,
-  ): Promise<void> {
+  ): Promise<boolean> {
     return await this.service.delete(id);
   }
 

@@ -11,8 +11,9 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { CreateUserDto } from './user.dto';
+import { CreateUserDto } from './user.create.dto';
 import { User } from './user.entity';
+import { LoginUserDto } from './user.login.dto';
 import { UserService } from './user.service';
 
 // @UseGuards(ApiTokenGuard)
@@ -20,6 +21,16 @@ import { UserService } from './user.service';
 export class UserController {
   @Inject(UserService)
   private readonly service: UserService;
+
+  @Post('/new')
+  public async createUser(@Body() body: CreateUserDto): Promise<User> {
+    return await this.service.createUser(body);
+  }
+
+  @Post('/login')
+  public login(@Body() body: LoginUserDto): Promise<User> {
+    return this.service.login(body.email, body.password);
+  }
 
   @UseGuards(ApiTokenGuard)
   @Get()
@@ -37,12 +48,7 @@ export class UserController {
   @Delete(':id')
   public async deleteUser(
     @Param('id', ParseIntPipe) id: number,
-  ): Promise<void> {
+  ): Promise<boolean> {
     return await this.service.delete(id);
-  }
-
-  @Post('/new')
-  public createUser(@Body() body: CreateUserDto): Promise<User> {
-    return this.service.createUser(body);
   }
 }

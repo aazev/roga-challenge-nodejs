@@ -49,13 +49,13 @@ export class PersonService {
     return person;
   }
 
-  public async delete(id: number): Promise<void> {
+  public async delete(id: number): Promise<boolean> {
     const person = await this.repository.findOne({ where: { id } });
 
     if (!person) {
       throw new NotFoundException(`Person not found`);
     }
 
-    await this.repository.delete(id);
+    return (await this.repository.delete(id)).affected > 0;
   }
 }

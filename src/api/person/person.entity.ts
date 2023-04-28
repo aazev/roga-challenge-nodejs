@@ -1,8 +1,10 @@
+import { Annotation } from '@api/annotation/annotation.entity';
 import { Cep } from '@api/cep/cep.class';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -26,6 +28,9 @@ export class Person {
 
   @Column({ type: 'date' })
   birth_date: Date;
+
+  @OneToMany((type) => Annotation, (annotation) => annotation.person)
+  annotations: Annotation[];
 
   @CreateDateColumn({ type: 'timestamp' })
   public createdAt!: Date;
