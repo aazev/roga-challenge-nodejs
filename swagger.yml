@@ -1,0 +1,360 @@
+openapi: 3.0.0
+paths:
+  /user/new:
+    post:
+      operationId: UserController_createUser
+      summary: Create a new user
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserDto'
+      responses:
+        '200':
+          description: The found record
+        '403':
+          description: Forbidden
+        '404':
+          description: Record not found
+      security:
+        - bearer: []
+  /user/login:
+    post:
+      operationId: UserController_login
+      summary: >-
+        Login a user, this is used to retrieve the user's api_token required as
+        authorization in other endpoints
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginUserDto'
+      responses:
+        '200':
+          description: The found record
+        '403':
+          description: Forbidden
+        '404':
+          description: Record not found
+  /user:
+    get:
+      operationId: UserController_getUsers
+      summary: Get all users
+      parameters: []
+      responses:
+        '200':
+          description: The found records
+        '403':
+          description: Forbidden
+  /user/{id}:
+    get:
+      operationId: UserController_getUser
+      summary: Get a user
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '200':
+          description: The found record
+        '403':
+          description: Forbidden
+        '404':
+          description: Record not found
+    patch:
+      operationId: UserController_updateUser
+      summary: Update a user
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserDto'
+      responses:
+        '200':
+          description: The found record
+        '403':
+          description: Forbidden
+        '404':
+          description: Record not found
+    delete:
+      operationId: UserController_deleteUser
+      summary: Delete a user
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '200':
+          description: The found record
+        '403':
+          description: Forbidden
+        '404':
+          description: Record not found
+  /user/{id}/password:
+    patch:
+      operationId: UserController_updateUserPassword
+      summary: Update a user password
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserPasswordDto'
+      responses:
+        '200':
+          description: The found record
+        '403':
+          description: Forbidden
+        '404':
+          description: Record not found
+  /person:
+    get:
+      operationId: PersonController_getPersons
+      summary: Get all persons
+      parameters: []
+      responses:
+        '200':
+          description: The found record
+        '403':
+          description: Forbidden
+        '404':
+          description: Record not found
+  /person/{id}:
+    get:
+      operationId: PersonController_getPerson
+      summary: Get a person
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '200':
+          description: The found record
+        '403':
+          description: Forbidden
+        '404':
+          description: Record not found
+    delete:
+      operationId: PersonController_deletePerson
+      summary: Delete a person
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '200':
+          description: The found record
+        '403':
+          description: Forbidden
+        '404':
+          description: Record not found
+  /person/new:
+    post:
+      operationId: PersonController_createPerson
+      summary: Create a person
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePersonDto'
+      responses:
+        '200':
+          description: The found record
+        '403':
+          description: Forbidden
+        '404':
+          description: Record not found
+  /person/{person_id}/annotation:
+    get:
+      operationId: AnnotationController_getAnnotations
+      summary: Get all annotations from a person
+      parameters:
+        - name: person_id
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '200':
+          description: The found record
+        '403':
+          description: Forbidden
+        '404':
+          description: Record not found
+  /person/{person_id}/annotation/{id}:
+    get:
+      operationId: AnnotationController_getAnnotation
+      summary: Get an annotation from a person
+      parameters:
+        - name: person_id
+          required: true
+          in: path
+          schema:
+            type: number
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '200':
+          description: The found record
+        '403':
+          description: Forbidden
+        '404':
+          description: Record not found
+    delete:
+      operationId: AnnotationController_deleteAnnotation
+      summary: Delete an annotation from a person
+      parameters:
+        - name: person_id
+          required: true
+          in: path
+          schema:
+            type: number
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '200':
+          description: The found record
+        '403':
+          description: Forbidden
+        '404':
+          description: Record not found
+  /person/{person_id}/annotation/new:
+    post:
+      operationId: AnnotationController_createAnnotation
+      summary: Create an annotation for a person
+      parameters:
+        - name: person_id
+          required: true
+          in: path
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAnnotationDto'
+      responses:
+        '200':
+          description: The found record
+        '403':
+          description: Forbidden
+        '404':
+          description: Record not found
+info:
+  title: RogaLabs Code Challenge API
+  description: API for RogaLabs Code Challenge
+  version: '1.0'
+  contact: {}
+tags:
+  - name: RogaLabs
+    description: ''
+servers: []
+components:
+  schemas:
+    CreateUserDto:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - name
+        - email
+        - password
+    LoginUserDto:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+    UpdateUserDto:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+      required:
+        - name
+        - email
+    UpdateUserPasswordDto:
+      type: object
+      properties:
+        oldPassword:
+          type: string
+        newPassword:
+          type: string
+      required:
+        - oldPassword
+        - newPassword
+    CreatePersonDto:
+      type: object
+      properties:
+        name:
+          type: string
+        mothers_name:
+          type: string
+        fathers_name:
+          type: string
+        cep:
+          type: string
+        birth_date:
+          format: date-time
+          type: string
+      required:
+        - name
+        - mothers_name
+        - fathers_name
+        - cep
+        - birth_date
+    CreateAnnotationDto:
+      type: object
+      properties:
+        title:
+          type: object
+        description:
+          type: object
+      required:
+        - title
+        - description

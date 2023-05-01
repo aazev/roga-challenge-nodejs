@@ -4,6 +4,8 @@ import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as dotenv from 'dotenv';
+import * as fs from 'fs';
+import * as yaml from 'js-yaml';
 
 import { AppModule } from './app.module';
 
@@ -17,6 +19,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('RogaLabs')
     .build();
+  const swagger_doc = SwaggerModule.createDocument(app, documentation_config);
   const config: ConfigService = app.get(ConfigService);
   const port: number = config.get<number>('PORT');
 
@@ -29,11 +32,9 @@ async function bootstrap() {
     credentials: true,
   });
 
-  SwaggerModule.setup(
-    'api',
-    app,
-    SwaggerModule.createDocument(app, documentation_config),
-  );
+  fs.writeFileSync('swagger.yml', yaml.dump(swagger_doc));
+
+  SwaggerModule.setup('api', app, swagger_doc);
 
   await app.listen(port, () => {
     console.log(`[WEB] Listening on ${config.get<string>('BASE_URL')}:${port}`);
