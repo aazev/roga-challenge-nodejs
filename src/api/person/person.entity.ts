@@ -29,7 +29,9 @@ export class Person {
   @Column({ type: 'date' })
   birth_date: Date;
 
-  @OneToMany((type) => Annotation, (annotation) => annotation.person)
+  @OneToMany((type) => Annotation, (annotation) => annotation.person, {
+    eager: true,
+  })
   annotations: Annotation[];
 
   @CreateDateColumn({ type: 'timestamp' })

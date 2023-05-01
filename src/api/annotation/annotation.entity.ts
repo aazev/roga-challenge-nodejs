@@ -16,7 +16,6 @@ export class Annotation {
 
   @ManyToOne((type) => Person, (person) => person.annotations, {
     nullable: false,
-    eager: true,
   })
   @JoinColumn({ name: 'person_id' })
   person: Person;

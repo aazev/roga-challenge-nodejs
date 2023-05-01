@@ -1,6 +1,6 @@
 import { CepModule } from '@api/cep/cep.module';
 import { UserModule } from '@api/user/user.module';
-import { ApiTokenGuard } from '@common/middleware/user_api_token/ApiTokenGuard';
+import { ApiTokenGuard } from '@middleware/user_api_token/ApiTokenGuard';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 

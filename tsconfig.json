@@ -14,8 +14,9 @@
     "skipLibCheck": true,
     "paths": {
       "@api/*": ["src/api/*"],
-      "@common/*": ["src/common/*"],
-      "@shared/*": ["src/shared/*"]
+      "@shared/*": ["src/shared/*"],
+      "@middleware/*": ["src/common/middleware/*"],
+      "@helper/*": ["src/common/*"]
     }
   },
   "exclude": ["node_modules", "dist"]

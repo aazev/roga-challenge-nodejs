@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { AnnotationController } from './annotation.controller';
 
 describe('AnnotationController', () => {
@@ -6,7 +7,7 @@ describe('AnnotationController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [AnnotationController],
+      providers: [AnnotationController],
     }).compile();
 
     controller = module.get<AnnotationController>(AnnotationController);

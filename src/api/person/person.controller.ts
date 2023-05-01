@@ -1,4 +1,4 @@
-import { ApiTokenGuard } from '@common/middleware/user_api_token/ApiTokenGuard';
+import { ApiTokenGuard } from '@middleware/user_api_token/ApiTokenGuard';
 import {
   Body,
   Controller,
