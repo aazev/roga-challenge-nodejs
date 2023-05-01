@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -10,14 +11,16 @@ import { Repository } from 'typeorm';
 
 import { CreateUserDto } from './user.create.dto';
 import { User } from './user.entity';
+import { UpdateUserPasswordDto } from './user.password.update.dto';
+import { UpdateUserDto } from './user.update.dto';
 
 @Injectable()
 export class UserService {
   @InjectRepository(User)
-  private readonly repository: Repository<User>;
+  private readonly userRepository: Repository<User>;
 
   public async getUser(id: number): Promise<User> {
-    const user = await this.repository.findOne({ where: { id } });
+    const user = await this.userRepository.findOne({ where: { id } });
     if (!user) {
       throw new NotFoundException(`User not found`);
     } else {
@@ -26,11 +29,11 @@ export class UserService {
   }
 
   public getUsers(): Promise<User[]> {
-    return this.repository.find();
+    return this.userRepository.find();
   }
 
   public async createUser(body: CreateUserDto): Promise<User> {
-    if (await this.repository.findOne({ where: { email: body.email } })) {
+    if (await this.userRepository.findOne({ where: { email: body.email } })) {
       throw new ConflictException(`Email already exists`);
     }
     const user: User = new User();
@@ -39,29 +42,29 @@ export class UserService {
     user.email = body.email;
     user.password = body.password;
 
-    return this.repository.save(user);
+    return this.userRepository.save(user);
   }
 
   public async delete(id: number, soft: boolean = true): Promise<boolean> {
-    const user = await this.repository.findOne({ where: { id } });
+    const user = await this.userRepository.findOne({ where: { id } });
 
     if (!user) {
       throw new NotFoundException(`User not found`);
     }
 
     if (soft) {
-      return (await this.repository.softDelete(id)).affected > 0;
+      return (await this.userRepository.softDelete(id)).affected > 0;
     } else {
-      return (await this.repository.delete(id)).affected > 0;
+      return (await this.userRepository.delete(id)).affected > 0;
     }
   }
 
   public async findByToken(api_token: string): Promise<User> {
-    return await this.repository.findOne({ where: { api_token } });
+    return await this.userRepository.findOne({ where: { api_token } });
   }
 
   public async login(email: string, password: string): Promise<User> {
-    const user = await this.repository
+    const user = await this.userRepository
       .createQueryBuilder('user')
       .addSelect('user.password')
       .where('user.email = :email', { email })
@@ -78,5 +81,44 @@ export class UserService {
     }
 
     return user;
+  }
+
+  public async updateUser(id: number, body: UpdateUserDto): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id } });
+
+    if (!user) {
+      throw new NotFoundException(`User not found`);
+    }
+
+    user.name = body.name;
+    user.email = body.email;
+
+    return this.userRepository.save(user);
+  }
+
+  public async updateUserPassword(
+    id: number,
+    body: UpdateUserPasswordDto,
+  ): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id } });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const { oldPassword, newPassword } = body;
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+
+    if (!isMatch) {
+      throw new BadRequestException('Old password is incorrect');
+    }
+
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    await this.userRepository.update(id, { password: hashedPassword });
+
+    return await this.userRepository.findOne({ where: { id } });
   }
 }

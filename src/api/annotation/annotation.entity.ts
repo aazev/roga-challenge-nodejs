@@ -14,7 +14,7 @@ export class Annotation {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne((type) => Person, (person) => person.annotations, {
+  @ManyToOne(() => Person, (person) => person.annotations, {
     nullable: false,
   })
   @JoinColumn({ name: 'person_id' })

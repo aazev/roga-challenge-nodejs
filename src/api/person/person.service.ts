@@ -14,7 +14,7 @@ export class PersonService {
   private readonly cepService: CepService;
 
   public async getPersons(): Promise<Person[]> {
-    let persons = await this.repository.find();
+    let persons = await this.repository.find({ relations: ['annotations'] });
     for (let person of persons) {
       const cep = await this.cepService.getCep(person.cep);
       person.address = cep;
@@ -23,7 +23,10 @@ export class PersonService {
   }
 
   public async getPerson(id: number): Promise<Person> {
-    const person = await this.repository.findOne({ where: { id } });
+    const person = await this.repository.findOne({
+      where: { id },
+      relations: ['annotations'],
+    });
     if (!person) {
       throw new NotFoundException(`Person not found`);
     } else {
