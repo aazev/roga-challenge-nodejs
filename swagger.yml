@@ -14,12 +14,14 @@ paths:
       responses:
         '200':
           description: The found record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
         '403':
           description: Forbidden
         '404':
           description: Record not found
-      security:
-        - bearer: []
   /user/login:
     post:
       operationId: UserController_login
@@ -36,10 +38,16 @@ paths:
       responses:
         '200':
           description: The found record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
         '403':
           description: Forbidden
         '404':
           description: Record not found
+      security:
+        - ApiTokenGuard: []
   /user:
     get:
       operationId: UserController_getUsers
@@ -48,6 +56,12 @@ paths:
       responses:
         '200':
           description: The found records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
         '403':
           description: Forbidden
   /user/{id}:
@@ -63,6 +77,10 @@ paths:
       responses:
         '200':
           description: The found record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
         '403':
           description: Forbidden
         '404':
@@ -85,6 +103,10 @@ paths:
       responses:
         '200':
           description: The found record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
         '403':
           description: Forbidden
         '404':
@@ -101,6 +123,10 @@ paths:
       responses:
         '200':
           description: The found record
+          content:
+            application/json:
+              schema:
+                type: boolean
         '403':
           description: Forbidden
         '404':
@@ -124,6 +150,10 @@ paths:
       responses:
         '200':
           description: The found record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
         '403':
           description: Forbidden
         '404':
@@ -136,6 +166,12 @@ paths:
       responses:
         '200':
           description: The found record
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Person'
         '403':
           description: Forbidden
         '404':
@@ -153,6 +189,10 @@ paths:
       responses:
         '200':
           description: The found record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Person'
         '403':
           description: Forbidden
         '404':
@@ -169,6 +209,10 @@ paths:
       responses:
         '200':
           description: The found record
+          content:
+            application/json:
+              schema:
+                type: boolean
         '403':
           description: Forbidden
         '404':
@@ -186,11 +230,15 @@ paths:
               $ref: '#/components/schemas/CreatePersonDto'
       responses:
         '200':
-          description: The found record
+          description: The created record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Person'
+        '400':
+          description: Bad request, missing or invalid parameters
         '403':
           description: Forbidden
-        '404':
-          description: Record not found
   /person/{person_id}/annotation:
     get:
       operationId: AnnotationController_getAnnotations
@@ -203,7 +251,13 @@ paths:
             type: number
       responses:
         '200':
-          description: The found record
+          description: The found records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Annotation'
         '403':
           description: Forbidden
         '404':
@@ -226,6 +280,10 @@ paths:
       responses:
         '200':
           description: The found record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Annotation'
         '403':
           description: Forbidden
         '404':
@@ -247,6 +305,10 @@ paths:
       responses:
         '200':
           description: The found record
+          content:
+            application/json:
+              schema:
+                type: boolean
         '403':
           description: Forbidden
         '404':
@@ -269,11 +331,15 @@ paths:
               $ref: '#/components/schemas/CreateAnnotationDto'
       responses:
         '200':
-          description: The found record
+          description: The created record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Annotation'
+        '400':
+          description: Bad request, missing or invalid parameters
         '403':
           description: Forbidden
-        '404':
-          description: Record not found
 info:
   title: RogaLabs Code Challenge API
   description: API for RogaLabs Code Challenge
@@ -284,6 +350,11 @@ tags:
     description: ''
 servers: []
 components:
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
   schemas:
     CreateUserDto:
       type: object
@@ -298,6 +369,37 @@ components:
         - name
         - email
         - password
+    User:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        api_token:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+        deletedAt:
+          format: date-time
+          type: string
+      required:
+        - id
+        - name
+        - email
+        - password
+        - api_token
+        - createdAt
+        - updatedAt
+        - deletedAt
     LoginUserDto:
       type: object
       properties:
@@ -328,6 +430,42 @@ components:
       required:
         - oldPassword
         - newPassword
+    Person:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        mothers_name:
+          type: string
+        fathers_name:
+          type: string
+        cep:
+          type: string
+        birth_date:
+          format: date-time
+          type: string
+        annotations:
+          type: array
+          items:
+            type: string
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - id
+        - name
+        - mothers_name
+        - fathers_name
+        - cep
+        - birth_date
+        - annotations
+        - createdAt
+        - updatedAt
     CreatePersonDto:
       type: object
       properties:
@@ -348,6 +486,9 @@ components:
         - fathers_name
         - cep
         - birth_date
+    Annotation:
+      type: object
+      properties: {}
     CreateAnnotationDto:
       type: object
       properties:

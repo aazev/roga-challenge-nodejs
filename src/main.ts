@@ -14,6 +14,7 @@ dotenv.config();
 async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule);
   const documentation_config = new DocumentBuilder()
+    .addBearerAuth()
     .setTitle('RogaLabs Code Challenge API')
     .setDescription('API for RogaLabs Code Challenge')
     .setVersion('1.0')

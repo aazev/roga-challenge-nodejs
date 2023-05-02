@@ -16,20 +16,31 @@ import { UpdateUserDto } from './user.update.dto';
 
 @Injectable()
 export class UserService {
-  @InjectRepository(User)
-  private readonly userRepository: Repository<User>;
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
 
   public async getUser(id: number): Promise<User> {
     const user = await this.userRepository.findOne({ where: { id } });
     if (!user) {
       throw new NotFoundException(`User not found`);
     } else {
+      delete user.api_token;
       return user;
     }
   }
 
-  public getUsers(): Promise<User[]> {
-    return this.userRepository.find();
+  public async getUsers(): Promise<User[]> {
+    const users = await this.userRepository.find();
+    if (!users) {
+      throw new NotFoundException(`Users not found`);
+    }
+
+    return users.map((user) => {
+      delete user.api_token;
+      return user;
+    });
   }
 
   public async createUser(body: CreateUserDto): Promise<User> {

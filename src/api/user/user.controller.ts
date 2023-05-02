@@ -28,11 +28,11 @@ export class UserController {
 
   @Post('/new')
   @UseGuards(ApiTokenGuard)
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new user' })
   @ApiResponse({
     status: 200,
     description: 'The found record',
+    type: User,
   })
   @ApiResponse({
     status: 404,
@@ -47,6 +47,7 @@ export class UserController {
   }
 
   @Post('/login')
+  @ApiBearerAuth('ApiTokenGuard')
   @ApiOperation({
     summary:
       "Login a user, this is used to retrieve the user's api_token required as authorization in other endpoints",
@@ -54,6 +55,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'The found record',
+    type: User,
   })
   @ApiResponse({
     status: 404,
@@ -73,6 +75,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'The found records',
+    type: [User],
   })
   @ApiResponse({
     status: 403,
@@ -88,6 +91,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'The found record',
+    type: User,
   })
   @ApiResponse({
     status: 404,
@@ -107,6 +111,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'The found record',
+    type: User,
   })
   @ApiResponse({
     status: 404,
@@ -129,6 +134,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'The found record',
+    type: User,
   })
   @ApiResponse({
     status: 404,
@@ -151,6 +157,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'The found record',
+    type: Boolean,
   })
   @ApiResponse({
     status: 404,

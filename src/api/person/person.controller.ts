@@ -27,6 +27,7 @@ export class PersonController {
   @ApiResponse({
     status: 200,
     description: 'The found record',
+    type: [Person],
   })
   @ApiResponse({
     status: 404,
@@ -45,6 +46,7 @@ export class PersonController {
   @ApiResponse({
     status: 200,
     description: 'The found record',
+    type: Person,
   })
   @ApiResponse({
     status: 404,
@@ -63,6 +65,7 @@ export class PersonController {
   @ApiResponse({
     status: 200,
     description: 'The found record',
+    type: Boolean,
   })
   @ApiResponse({
     status: 404,
@@ -82,11 +85,12 @@ export class PersonController {
   @ApiOperation({ summary: 'Create a person' })
   @ApiResponse({
     status: 200,
-    description: 'The found record',
+    description: 'The created record',
+    type: Person,
   })
   @ApiResponse({
-    status: 404,
-    description: 'Record not found',
+    status: 400,
+    description: 'Bad request, missing or invalid parameters',
   })
   @ApiResponse({
     status: 403,

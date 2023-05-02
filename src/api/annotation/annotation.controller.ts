@@ -26,7 +26,8 @@ export class AnnotationController {
   @ApiOperation({ summary: 'Get all annotations from a person' })
   @ApiResponse({
     status: 200,
-    description: 'The found record',
+    description: 'The found records',
+    type: [Annotation],
   })
   @ApiResponse({
     status: 404,
@@ -47,6 +48,7 @@ export class AnnotationController {
   @ApiResponse({
     status: 200,
     description: 'The found record',
+    type: Annotation,
   })
   @ApiResponse({
     status: 404,
@@ -68,6 +70,7 @@ export class AnnotationController {
   @ApiResponse({
     status: 200,
     description: 'The found record',
+    type: Boolean,
   })
   @ApiResponse({
     status: 404,
@@ -88,11 +91,12 @@ export class AnnotationController {
   @ApiOperation({ summary: 'Create an annotation for a person' })
   @ApiResponse({
     status: 200,
-    description: 'The found record',
+    description: 'The created record',
+    type: Annotation,
   })
   @ApiResponse({
-    status: 404,
-    description: 'Record not found',
+    status: 400,
+    description: 'Bad request, missing or invalid parameters',
   })
   @ApiResponse({
     status: 403,
