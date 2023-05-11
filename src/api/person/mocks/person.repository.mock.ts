@@ -1,3 +1,7 @@
+import { Repository } from 'typeorm';
+
+import { Person } from '../person.entity';
+
 export const persons = [
   {
     id: 1,
@@ -56,7 +60,7 @@ export const persons = [
   },
 ];
 
-export class mockPersonRepository {
+export class mockPersonRepository extends Repository<Person> {
   private persons = persons;
 
   private maxId() {
@@ -66,8 +70,8 @@ export class mockPersonRepository {
     );
   }
 
-  public async findOne(id: number) {
-    return Promise.resolve(this.persons.find((u) => u.id === id));
+  public async findOne(options: { where: { id: number } }) {
+    return Promise.resolve(this.persons.find((u) => u.id === options.where.id));
   }
 
   public async find() {
@@ -83,12 +87,12 @@ export class mockPersonRepository {
     return Promise.resolve(nPerson);
   }
 
-  public async delete(id: number) {
-    const person = await this.findOne(id);
+  public async delete(id: number): Promise<{ affected: number; raw }> {
+    const person = await this.findOne({ where: { id } });
     if (!person) {
-      return Promise.resolve({ affected: 0 });
+      return Promise.resolve({ affected: 0, raw: 0 });
     }
-    this.persons.filter((u) => u.id !== id);
-    return Promise.resolve({ affected: 1 });
+    this.persons = this.persons.filter((p) => p.id !== id);
+    return Promise.resolve({ affected: 1, raw: 0 });
   }
 }

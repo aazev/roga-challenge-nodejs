@@ -1,5 +1,8 @@
 import * as bcrypt from 'bcrypt';
+import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
+
+import { User } from '../user.entity';
 
 export const users = [
   {
@@ -34,7 +37,7 @@ export const users = [
   } as any,
 ];
 
-export class mockUserRepository {
+export class mockUserRepository extends Repository<User> {
   private users = users;
 
   private maxId() {
@@ -44,8 +47,8 @@ export class mockUserRepository {
     );
   }
 
-  public async findOne(id: number) {
-    return Promise.resolve(this.users.find((u) => u.id === id));
+  public async findOne(options: { where: { id: number } }) {
+    return Promise.resolve(this.users.find((u) => u.id === options.where.id));
   }
 
   public async find() {
@@ -65,21 +68,23 @@ export class mockUserRepository {
     return Promise.resolve(nUser);
   }
 
-  public async softDelete(id: number) {
-    const user = await this.findOne(id);
+  public async softDelete(
+    id: number,
+  ): Promise<{ affected: number; raw; generatedMaps }> {
+    const user = await this.findOne({ where: { id } });
     if (!user) {
-      return Promise.resolve({ affected: 0 });
+      return Promise.resolve({ affected: 0, raw: 0, generatedMaps: [] });
     }
     user.deletedAt = new Date();
-    return Promise.resolve({ affected: 1 });
+    return Promise.resolve({ affected: 1, raw: 0, generatedMaps: [] });
   }
 
-  public async delete(id: number) {
-    const user = await this.findOne(id);
+  public async delete(id: number): Promise<{ affected: number; raw }> {
+    const user = await this.findOne({ where: { id } });
     if (!user) {
-      return Promise.resolve({ affected: 0 });
+      return Promise.resolve({ affected: 0, raw: 0 });
     }
     this.users = this.users.filter((u) => u.id !== id);
-    return Promise.resolve({ affected: 1 });
+    return Promise.resolve({ affected: 1, raw: 0 });
   }
 }

@@ -1,0 +1,30 @@
+concurrency: 25
+base: 'http://localhost:3000'
+iterations: 100
+rampup: 2
+
+plan:
+  - name: Login user
+    request:
+      url: /user/login
+      method: POST
+      headers:
+        Content-Type: 'application/json'
+      body: '{"email": "ironman@starkindustries.net", "password": "IAmIronMan2023"}'
+    assign: login
+
+  - name: Fetch all persons
+    request:
+      url: /person
+      headers:
+        Authorization: Bearer {{ login.body.api_token }}
+        Accept: 'application/json'
+
+  - name: Fetch person by id
+    request:
+      url: /person/{{ item }}
+      headers:
+        Authorization: Bearer {{ login.body.api_token }}
+        Accept: 'application/json'
+    with_items:
+      - 1

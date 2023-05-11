@@ -34,20 +34,17 @@ describe('AnnotationService', () => {
           useClass: mockCepService,
         },
         {
-          provide: 'AnnotationRepository',
+          provide: getRepositoryToken(Annotation),
           useClass: mockAnnotationRepository,
         },
         {
-          provide: 'PersonRepository',
+          provide: getRepositoryToken(Person),
           useClass: mockPersonRepository,
         },
-        { provide: 'UserRepository', useClass: mockUserRepository },
+        { provide: getRepositoryToken(User), useClass: mockUserRepository },
       ],
     }).compile();
 
-    annotationService = module.get<AnnotationService>(AnnotationService);
-    personService = module.get<PersonService>(PersonService);
-    userService = module.get<UserService>(UserService);
     annotationRepository = module.get<Repository<Annotation>>(
       getRepositoryToken(Annotation),
     );
@@ -55,6 +52,9 @@ describe('AnnotationService', () => {
       getRepositoryToken(Person),
     );
     userRepository = module.get<Repository<User>>(getRepositoryToken(User));
+    annotationService = module.get<AnnotationService>(AnnotationService);
+    personService = module.get<PersonService>(PersonService);
+    userService = module.get<UserService>(UserService);
   });
 
   it('should be defined', () => {
@@ -67,7 +67,7 @@ describe('AnnotationService', () => {
 
       expect(annotations).toBeDefined();
       expect(annotations).toBeInstanceOf(Array);
-      expect(annotations.length).toBe(3);
+      expect(annotations.length).toBe(4);
     });
 
     it('should throw a NotFoundException when passed an invalid person id', async () => {

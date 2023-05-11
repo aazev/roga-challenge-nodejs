@@ -1,3 +1,5 @@
+import { Repository } from 'typeorm';
+
 import { Annotation } from '../annotation.entity';
 
 export const annotations: Annotation[] = [
@@ -35,7 +37,7 @@ export const annotations: Annotation[] = [
   },
 ];
 
-export class mockAnnotationRepository {
+export class mockAnnotationRepository extends Repository<Annotation> {
   private annotations = annotations;
 
   private maxId() {
@@ -45,8 +47,10 @@ export class mockAnnotationRepository {
     );
   }
 
-  public async findOne(id: number) {
-    return Promise.resolve(this.annotations.find((u) => u.id === id));
+  public async findOne(options: { where: { id: number } }) {
+    return Promise.resolve(
+      this.annotations.find((u) => u.id === options.where.id),
+    );
   }
 
   public async find() {
@@ -62,12 +66,12 @@ export class mockAnnotationRepository {
     return Promise.resolve(nAnnotation);
   }
 
-  public async delete(id: number) {
-    const annotation = await this.findOne(id);
+  public async delete(id: number): Promise<{ affected: number; raw }> {
+    const annotation = await this.findOne({ where: { id } });
     if (!annotation) {
-      return Promise.resolve({ affected: 0 });
+      return Promise.resolve({ affected: 0, raw: 0 });
     }
     this.annotations = this.annotations.filter((a) => a.id !== id);
-    return Promise.resolve({ affected: 1 });
+    return Promise.resolve({ affected: 1, raw: 0 });
   }
 }
